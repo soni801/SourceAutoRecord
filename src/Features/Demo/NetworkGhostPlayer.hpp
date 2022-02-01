@@ -61,6 +61,7 @@ public:
 	std::string name;
 	bool isCountdownReady;
 	std::string modelName;
+	bool spectator;
 
 	sf::Uint32 splitTicks = -1;
 	sf::Uint32 splitTicksTotal = -1;
@@ -70,7 +71,7 @@ public:
 public:
 	NetworkManager();
 
-	void Connect(sf::IpAddress ip, unsigned short int port);
+	void Connect(sf::IpAddress ip, unsigned short int port, bool spectator = false);
 	void Disconnect();
 	void StopServer();
 	void PauseNetwork();

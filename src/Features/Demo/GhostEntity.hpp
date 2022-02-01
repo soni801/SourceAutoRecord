@@ -52,6 +52,7 @@ public:
 	static GhostType ghost_type;
 	static std::string defaultModelName;
 	static Color set_color;
+	bool spectator;
 
 	bool isDestroyed;  // used by NetworkGhostPlayer for sync reasons
 

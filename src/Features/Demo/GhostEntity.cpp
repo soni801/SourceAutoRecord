@@ -32,7 +32,8 @@ GhostEntity::GhostEntity(unsigned int &ID, std::string &name, DataGhost &data, s
 	, currentMap(current_map)
 	, modelName(GhostEntity::defaultModelName)
 	, prop_entity(nullptr)
-	, isDestroyed(false) {
+	, isDestroyed(false)
+	, spectator(false) {
 }
 
 GhostEntity::~GhostEntity() {
