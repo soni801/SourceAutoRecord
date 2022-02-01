@@ -71,7 +71,7 @@ public:
 public:
 	NetworkManager();
 
-	void Connect(sf::IpAddress ip, unsigned short int port, bool spectator = false);
+	void Connect(sf::IpAddress ip, unsigned short int port, bool spectator);
 	void Disconnect();
 	void StopServer();
 	void PauseNetwork();
