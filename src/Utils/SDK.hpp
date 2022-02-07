@@ -1514,3 +1514,17 @@ struct TracePortalPlacementInfo_t
 };
 
 class IMaterial;
+
+
+struct CFontAmalgam 
+{
+	struct TFontRange {
+		int lowRange;
+		int highRange;
+		void *pFont;
+	};
+
+	CUtlVector<TFontRange> m_Fonts;
+	int m_iMaxWidth;
+	int m_iMaxHeight;
+};

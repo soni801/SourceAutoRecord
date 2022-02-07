@@ -6,6 +6,7 @@
 #include "Module.hpp"
 #include "Offsets.hpp"
 #include "Utils.hpp"
+#include "Scheme.hpp"
 
 #include <stdarg.h>
 
@@ -17,6 +18,33 @@ CON_COMMAND(sar_font_get_name, "sar_font_get_name <id> - gets the name of a font
 	int id = atoi(args[1]);
 	const char *name = surface->GetFontName(surface->matsurface->ThisPtr(), id);
 	console->Print("%s\n", name);
+}
+
+CON_COMMAND(sar_font_list, "sar_font_list - lists all available fonts\n") {
+	if (surface->m_FontAmalgams == nullptr) return;
+	int fontCount = surface->m_FontAmalgams->m_Size;
+
+	int defaultFontID = scheme->GetDefaultFont();
+
+	for (int i = 0; i < fontCount; i++) {
+		std::string output = std::to_string(i - defaultFontID) + ". ";
+		if (surface->IsFontValid(i)) {
+			output += surface->GetFontName(surface->matsurface->ThisPtr(), i);
+			output += Utils::ssprintf(" (size %d)", surface->m_FontAmalgams->m_pElements[i].m_iMaxHeight);
+		} else {
+			output += "(INVALID)";
+		}
+		output += "\n";
+		console->Print("%s", output.c_str());
+	}
+	
+}
+
+// using font amalgams array to determine whether font is valid.
+bool Surface::IsFontValid(HFont font) {
+	if (m_FontAmalgams == nullptr) return false;
+	if (m_FontAmalgams->m_Size <= font) return false;
+	return m_FontAmalgams->m_pElements[font].m_Fonts.m_Size > 0;
 }
 
 int Surface::GetFontHeight(HFont font) {
@@ -113,6 +141,11 @@ bool Surface::Init() {
 		auto PaintTraverseEx = matsurface->Original(Offsets::PaintTraverseEx);
 		this->StartDrawing = Memory::Read<_StartDrawing>(PaintTraverseEx + Offsets::StartDrawing);
 		this->FinishDrawing = Memory::Read<_FinishDrawing>(PaintTraverseEx + Offsets::FinishDrawing);
+
+		// finding m_FontAmalgams pointer from CMatSystemSurface::GetFontName
+		uintptr_t offsetFontManagerSingleton = *(uintptr_t *)((uintptr_t)this->GetFontName + 0x8);
+		uintptr_t offsetFontAmalgams = (uintptr_t)this->GetFontName + 0xC + offsetFontManagerSingleton + 0x1;
+		m_FontAmalgams = (CUtlVector<CFontAmalgam> *)*(void **)offsetFontAmalgams;
 	}
 
 	return this->hasLoaded = this->matsurface;
